@@ -11,6 +11,7 @@ const Users = () => {
         pageDescription="Users can be registered updated using this Module"
       />
       <UserForm />
+      <UserForm />
     </>
   );
 };
