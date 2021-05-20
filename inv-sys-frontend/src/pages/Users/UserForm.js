@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Grid, TextField } from "@material-ui/core";
+import React, { useEffect } from "react";
+import {
+  Grid,
+  TextField,
+  RadioGroup,
+  FormLabel,
+  FormControl,
+  FormControlLabel,
+  Radio,
+} from "@material-ui/core";
+import { useFormState, Form } from "../../components/useFormState";
+import DefaultTextField from "../../components/controls/DefaultTextField";
 
 const intialValues = {
   id: 0,
-  firstName: "",
-  lastName: "",
+  firstName: "Kanchana",
+  lastName: "Gunathilake",
   userName: "",
   dob: "",
   city: "",
@@ -12,34 +22,73 @@ const intialValues = {
   email: "",
   roles: [],
   passowrd: "",
-  lastLoging: false,
+  lastLoging: "",
   activeStatus: false,
   loginStatus: false,
-  gender: "",
+  gender: "female",
 };
 
 const UserForm = () => {
-  const { values, setValue } = useState(intialValues);
+  const { values, handleInputChange } = useFormState(intialValues);
 
   return (
-    <form>
+    <Form>
       <Grid container>
         <Grid item xs={6}>
-          <TextField
-            variant="outlined"
-            label="First Name"
-            value={values.firstName}
+          <DefaultTextField
+            fieldName="firstName"
+            labelValue="First Name"
+            fieldValue={values.firstName}
+            onChange={handleInputChange}
           />
           <TextField
             variant="outlined"
+            name="lastName"
             label="Last Name"
             value={values.lastName}
+            onChange={handleInputChange}
           />
-          <TextField variant="outlined" label="Email" value={values.email} />
+
+          <TextField
+            variant="outlined"
+            name="userName"
+            label="User Name"
+            value={values.userName}
+            onChange={handleInputChange}
+          />
+          <TextField
+            variant="outlined"
+            name="email"
+            label="Email"
+            value={values.email}
+            onChange={handleInputChange}
+          />
         </Grid>
-        <Grid itme xs={6}></Grid>
+        <Grid item xs={6}>
+          <FormControl>
+            <FormLabel>Gender</FormLabel>
+            <RadioGroup
+              row
+              name="gender"
+              value={values.gender}
+              onChange={handleInputChange}
+            >
+              <FormControlLabel value="male" control={<Radio />} label="Male" />
+              <FormControlLabel
+                value="female"
+                control={<Radio />}
+                label="Female"
+              />
+              <FormControlLabel
+                value="other"
+                control={<Radio />}
+                label="Other"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
       </Grid>
-    </form>
+    </Form>
   );
 };
 export default UserForm;
