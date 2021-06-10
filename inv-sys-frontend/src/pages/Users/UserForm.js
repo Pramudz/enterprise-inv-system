@@ -1,30 +1,46 @@
 import React, { useEffect } from "react";
-import {
-  Grid,
-  TextField,
-  RadioGroup,
-  FormLabel,
-  FormControl,
-  FormControlLabel,
-  Radio,
-} from "@material-ui/core";
+import { Grid, TextField } from "@material-ui/core";
 import { useFormState, Form } from "../../components/useFormState";
 import DefaultTextField from "../../components/controls/DefaultTextField";
+import DefaultRadioGroup from "../../components/controls/DefaultRadioGroup";
+import MultiSelectCombo from "../../components/controls/MultiSelectCombo";
+import SelectCombo from "../../components/controls/SelectCombo";
+import DatePicker from "../../components/controls/DatePicker";
+import CheckBox from "../../components/controls/CheckBox";
+import FormButton from "../../components/controls/FormButton";
+import SaveIcon from "@material-ui/icons/Save";
+const genderItems = [
+  { id: "male", title: "Male" },
+  { id: "female", title: "Female" },
+  { id: "other", title: "Other" },
+];
 
+const roleItems = [
+  { id: "1", name: "Manger" },
+  { id: "2", name: "Cashier" },
+  { id: "3", name: "Supervisor" },
+];
+
+const locations = [
+  { id: "1", name: "Moratuwa" },
+  { id: "2", name: "Panadura" },
+  { id: "3", name: "wattala" },
+];
 const intialValues = {
   id: 0,
   firstName: "Kanchana",
   lastName: "Gunathilake",
   userName: "",
-  dob: "",
+  location: "",
+  dob: null,
   city: "",
   contactNum: "",
   email: "",
   roles: [],
-  passowrd: "",
-  lastLoging: "",
+  passowrd: "12345678",
+  lastLogin: "2021-04-10",
   activeStatus: false,
-  loginStatus: false,
+  loginStatus: true,
   gender: "female",
 };
 
@@ -63,29 +79,105 @@ const UserForm = () => {
             value={values.email}
             onChange={handleInputChange}
           />
+
+          <DatePicker
+            name="dob"
+            labelName="Date of Birth"
+            value={values.dob}
+            onChange={handleInputChange}
+          />
+
+          <TextField
+            variant="outlined"
+            name="city"
+            label="Living City"
+            value={values.city}
+            onChange={handleInputChange}
+          />
+          <TextField
+            variant="outlined"
+            name="contactNum"
+            label="Contact Number"
+            value={values.contactNum}
+            onChange={handleInputChange}
+          />
         </Grid>
         <Grid item xs={6}>
-          <FormControl>
-            <FormLabel>Gender</FormLabel>
-            <RadioGroup
-              row
-              name="gender"
-              value={values.gender}
-              onChange={handleInputChange}
-            >
-              <FormControlLabel value="male" control={<Radio />} label="Male" />
-              <FormControlLabel
-                value="female"
-                control={<Radio />}
-                label="Female"
-              />
-              <FormControlLabel
-                value="other"
-                control={<Radio />}
-                label="Other"
-              />
-            </RadioGroup>
-          </FormControl>
+          <DefaultRadioGroup
+            formLabelName="Gender"
+            radioGroupName="gender"
+            radioGroupValue={values.gender}
+            onChange={handleInputChange}
+            items={genderItems}
+          />
+
+          <MultiSelectCombo
+            labelName="Roles"
+            selectName="roles"
+            items={roleItems}
+          />
+
+          <SelectCombo
+            labelName="Outlet Name"
+            value={values.location}
+            name="location"
+            onChange={handleInputChange}
+            items={locations}
+          />
+          <TextField
+            variant="outlined"
+            disabled
+            name="lastLogin"
+            label="Last Login Date"
+            value={values.lastLogin}
+            onChange={handleInputChange}
+          />
+
+          <TextField
+            name="password"
+            value={values.passowrd}
+            id="outlined-password-input"
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            variant="outlined"
+          />
+
+          <CheckBox
+            name="activeStatus"
+            value={values.activeStatus}
+            labelName="Active/Inactive"
+            onChange={handleInputChange}
+            disableStatus={false}
+            color="secondary"
+          />
+
+          <CheckBox
+            name="loginStatus"
+            value={values.loginStatus}
+            labelName="Login Status"
+            onChange={handleInputChange}
+            disableStatus={true}
+            color="primary"
+          />
+
+          <div>
+            <FormButton
+              type="submit"
+              buttonName="Save"
+              size="large"
+              color="primary"
+              variant="contained"
+              startIcon={<SaveIcon />}
+            />
+
+            <FormButton
+              buttonName="Reset"
+              size="large"
+              color="default"
+              variant="contained"
+            />
+          </div>
         </Grid>
       </Grid>
     </Form>
