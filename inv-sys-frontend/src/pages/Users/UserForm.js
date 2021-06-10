@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Grid, TextField } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { useFormState, Form } from "../../components/useFormState";
 import DefaultTextField from "../../components/controls/DefaultTextField";
 import DefaultRadioGroup from "../../components/controls/DefaultRadioGroup";
@@ -9,6 +9,7 @@ import DatePicker from "../../components/controls/DatePicker";
 import CheckBox from "../../components/controls/CheckBox";
 import FormButton from "../../components/controls/FormButton";
 import SaveIcon from "@material-ui/icons/Save";
+
 const genderItems = [
   { id: "male", title: "Male" },
   { id: "female", title: "Female" },
@@ -45,39 +46,68 @@ const intialValues = {
 };
 
 const UserForm = () => {
-  const { values, handleInputChange } = useFormState(intialValues);
+  const { values, handleInputChange, errors, setErrors } = useFormState(
+    intialValues
+  );
 
+  const validateForm = () => {
+    let temp = {};
+    temp.firstName = values.firstName ? "" : "This Field is Required";
+    temp.lastName = values.lastName ? "" : "This Field is Required";
+    temp.userName = values.userName ? "" : "This Field is Required";
+    temp.email = /$^|.*@.*..*/.test(values.email) ? "" : "Email is not Valid";
+    temp.contactNum =
+      values.contactNum.length > 9 ? "" : "Contact Number is not Valid";
+    temp.location =
+      values.location.length !== 0 ? "" : "This Field is Required";
+
+    setErrors({
+      ...temp,
+    });
+    const testValue = (inputValue) => inputValue === "";
+    return Object.values(temp).every(testValue);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) window.alert("Hi");
+  };
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Grid container>
         <Grid item xs={6}>
           <DefaultTextField
-            fieldName="firstName"
-            labelValue="First Name"
-            fieldValue={values.firstName}
+            variant="outlined"
+            name="firstName"
+            label="First Name"
+            value={values.firstName}
             onChange={handleInputChange}
+            errMessege={errors.firstName}
           />
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="lastName"
             label="Last Name"
             value={values.lastName}
             onChange={handleInputChange}
+            errMessege={errors.lastName}
           />
 
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="userName"
             label="User Name"
             value={values.userName}
             onChange={handleInputChange}
+            errMessege={errors.userName}
           />
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="email"
             label="Email"
             value={values.email}
             onChange={handleInputChange}
+            errMessege={errors.email}
           />
 
           <DatePicker
@@ -87,14 +117,15 @@ const UserForm = () => {
             onChange={handleInputChange}
           />
 
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="city"
             label="Living City"
             value={values.city}
             onChange={handleInputChange}
+            errMessege={errors.city}
           />
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="contactNum"
             label="Contact Number"
@@ -124,7 +155,7 @@ const UserForm = () => {
             onChange={handleInputChange}
             items={locations}
           />
-          <TextField
+          <DefaultTextField
             variant="outlined"
             disabled
             name="lastLogin"
@@ -133,7 +164,7 @@ const UserForm = () => {
             onChange={handleInputChange}
           />
 
-          <TextField
+          <DefaultTextField
             name="password"
             value={values.passowrd}
             id="outlined-password-input"
