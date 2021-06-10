@@ -7,8 +7,6 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import Header from "../components/Header";
-import PageHeader from "../components/PageHeader";
-import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
 import Users from "../pages/Users/Users";
 const customisedTheme = createMuiTheme({
   palette: {
