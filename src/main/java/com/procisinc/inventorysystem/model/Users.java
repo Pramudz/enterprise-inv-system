@@ -27,7 +27,7 @@ public class Users {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
-	private int user_id;
+	private Integer user_id;
 
 	@Column(name = "first_name")
 	private String firstName;
@@ -50,12 +50,6 @@ public class Users {
 	@Column(name = "user_email", unique = true , nullable = true)
 	private String userEmail;
 
-	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
-	@JoinTable(name = "user_role", joinColumns = {
-			@JoinColumn(referencedColumnName = "user_id" , nullable = false) }, inverseJoinColumns = {
-					@JoinColumn(referencedColumnName = "role_id", nullable = false) })
-	private Set<Role> role;
-
 	@Column(name = "password", nullable = true)
 	private String password;
 
@@ -70,4 +64,13 @@ public class Users {
 	
 	@Column(name = "gender",nullable = true)
 	private String gender;
+
+
+	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@JoinTable(name = "user_role", joinColumns = {
+			@JoinColumn(referencedColumnName = "user_id" , nullable = false) }, inverseJoinColumns = {
+					@JoinColumn(referencedColumnName = "role_id", nullable = false) })
+	private Set<Role> role;
+
+	
 }

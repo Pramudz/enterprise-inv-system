@@ -27,8 +27,8 @@ public class Role {
 	@Column(name = "role_id")
 	private int roleId;
 
-	@ManyToMany(mappedBy = "role", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
-	private Set<Users> users;
+//	@ManyToMany(mappedBy = "role")
+//	private Set<Users> users;
 
 	
 	@Column(name = "role_name", nullable = false , unique = true)
@@ -42,7 +42,7 @@ public class Role {
 			@JoinColumn(referencedColumnName = "role_id" , nullable = false) }, inverseJoinColumns = {
 					@JoinColumn(referencedColumnName  ="func_id" , nullable = false)
 	})
-	private Set<RoleFunctions> roleFunctions;
+	private Set<Functions> roleFunctions;
 	
 	
 	

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.procisinc.inventorysystem.model.Users;
 
 @Component
-public interface UserRepository extends JpaRepository<Users, Long> {
+public interface UserRepository extends JpaRepository<Users, Integer> {
 
 	
 	List<Users> findAll();
