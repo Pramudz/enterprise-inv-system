@@ -9,6 +9,12 @@ import DatePicker from "../../components/controls/DatePicker";
 import CheckBox from "../../components/controls/CheckBox";
 import FormButton from "../../components/controls/FormButton";
 import SaveIcon from "@material-ui/icons/Save";
+import Validation from "../../components/Validation";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "http://localhost:8080/api/",
+});
 
 const genderItems = [
   { id: "male", title: "Male" },
@@ -22,11 +28,17 @@ const roleItems = [
   { id: "3", name: "Supervisor" },
 ];
 
-const locations = [
+let locations = [
   { id: "1", name: "Moratuwa" },
   { id: "2", name: "Panadura" },
   { id: "3", name: "wattala" },
 ];
+
+const getLocations = async () => {
+  let data = await api.get("/locations").then(({ data }) => data);
+  console.log(data);
+};
+
 const intialValues = {
   id: 0,
   firstName: "Kanchana",
@@ -46,16 +58,24 @@ const intialValues = {
 };
 
 const UserForm = () => {
-  const { values, handleInputChange, errors, setErrors } = useFormState(
-    intialValues
-  );
+  const {
+    values,
+    handleInputChange,
+    errors,
+    setErrors,
+    resetForm,
+  } = useFormState(intialValues);
 
-  const validateForm = () => {
-    let temp = {};
+  useEffect(() => {
+    getLocations();
+  });
+  const { validateEmail, validateStringWithoutSpace } = Validation();
+
+  let temp = {};
+  const validateFormOnSubmit = () => {
     temp.firstName = values.firstName ? "" : "This Field is Required";
     temp.lastName = values.lastName ? "" : "This Field is Required";
     temp.userName = values.userName ? "" : "This Field is Required";
-    temp.email = /$^|.*@.*..*/.test(values.email) ? "" : "Email is not Valid";
     temp.contactNum =
       values.contactNum.length > 9 ? "" : "Contact Number is not Valid";
     temp.location =
@@ -70,7 +90,7 @@ const UserForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validateForm()) window.alert("Hi");
+    if (validateFormOnSubmit()) window.alert("Hi");
   };
   return (
     <Form onSubmit={handleSubmit}>
@@ -82,6 +102,12 @@ const UserForm = () => {
             label="First Name"
             value={values.firstName}
             onChange={handleInputChange}
+            onKeyUp={validateStringWithoutSpace(
+              values.firstName,
+              errors,
+              "firstName",
+              "First Name"
+            )}
             errMessege={errors.firstName}
           />
           <DefaultTextField
@@ -90,6 +116,12 @@ const UserForm = () => {
             label="Last Name"
             value={values.lastName}
             onChange={handleInputChange}
+            onKeyUp={validateStringWithoutSpace(
+              values.lastName,
+              errors,
+              "lastName",
+              "Last Name"
+            )}
             errMessege={errors.lastName}
           />
 
@@ -99,6 +131,12 @@ const UserForm = () => {
             label="User Name"
             value={values.userName}
             onChange={handleInputChange}
+            onKeyUp={validateStringWithoutSpace(
+              values.userName,
+              errors,
+              "userName",
+              "Username"
+            )}
             errMessege={errors.userName}
           />
           <DefaultTextField
@@ -107,6 +145,7 @@ const UserForm = () => {
             label="Email"
             value={values.email}
             onChange={handleInputChange}
+            onKeyUp={validateEmail(values.email, errors, "email")}
             errMessege={errors.email}
           />
 
@@ -147,14 +186,15 @@ const UserForm = () => {
             selectName="roles"
             items={roleItems}
           />
-
           <SelectCombo
             labelName="Outlet Name"
             value={values.location}
             name="location"
             onChange={handleInputChange}
             items={locations}
+            errMessege={errors.location}
           />
+
           <DefaultTextField
             variant="outlined"
             disabled
@@ -207,6 +247,7 @@ const UserForm = () => {
               size="large"
               color="default"
               variant="contained"
+              onClick={resetForm}
             />
           </div>
         </Grid>

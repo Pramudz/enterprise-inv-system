@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import SideMenu from "../components/SideMenu";
 import {
   makeStyles,
@@ -8,6 +8,8 @@ import {
 } from "@material-ui/core";
 import Header from "../components/Header";
 import Users from "../pages/Users/Users";
+import LoginForm from "../pages/Users/LoginForm";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 const customisedTheme = createMuiTheme({
   palette: {
     primary: {
@@ -52,14 +54,25 @@ const useStyles = makeStyles({
 
 function App() {
   const classes = useStyles();
+  const [token, setToken] = useState();
+
+  if (!token) {
+    return <LoginForm setToken={setToken} />;
+  }
+
   return (
     <ThemeProvider theme={customisedTheme}>
-      <SideMenu />
-      <div className={classes.appMain}>
-        <Header />
-        <Users />
-      </div>
-      <CssBaseline />
+      <Router>
+        <SideMenu />
+        <div className={classes.appMain}>
+          <Header />
+
+          <Switch>
+            <Route exact path="/user" component={Users} />
+          </Switch>
+        </div>
+        <CssBaseline />
+      </Router>
     </ThemeProvider>
   );
 }

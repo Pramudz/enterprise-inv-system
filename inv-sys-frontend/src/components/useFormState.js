@@ -13,12 +13,18 @@ const useFormState = (initialValues) => {
     });
   };
 
+  const resetForm = () => {
+    setValues(initialValues);
+    setErrors({});
+  };
+
   return {
     values,
     handleInputChange,
     setValues,
     errors,
     setErrors,
+    resetForm,
   };
 };
 

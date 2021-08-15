@@ -1,5 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
+import SideNav from "../components/controls/side-navigation/SideNav";
 
 // by using makeStyle in material ui JSS cssing
 const sideMenustyles = makeStyles({
@@ -17,6 +18,10 @@ const sideMenustyles = makeStyles({
 const SideMenu = () => {
   const styleClass = sideMenustyles();
   console.log(styleClass);
-  return <div className={styleClass.sideMenu}></div>;
+  return (
+    <div className={styleClass.sideMenu}>
+      <SideNav />
+    </div>
+  );
 };
 export default SideMenu;

@@ -1,0 +1,14 @@
+useEffect(() => {
+    fetch("http://localhost:8080/api/users", {
+      method: "GET",
+      headers: new Headers({
+        Accept: "application/json",
+        Authorization: "Basic " + btoa(`${user}:${pass}`),
+      }),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.log(error));
+  });
