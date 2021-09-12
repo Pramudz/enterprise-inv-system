@@ -2,15 +2,25 @@ import React from "react";
 import { TextField } from "@material-ui/core";
 
 const DefaultTextField = (props) => {
-  const { fieldName, labelValue, fieldValue, onChange } = props;
+  const {
+    name,
+    label,
+    value,
+    onChange,
+    variant,
+    errMessege = null,
+    ...other
+  } = props;
 
   return (
     <TextField
-      name={fieldName}
-      variant="outlined"
-      label={labelValue}
-      value={fieldValue}
+      name={name}
+      variant={variant}
+      label={label}
+      value={value}
       onChange={onChange}
+      {...(errMessege && { error: true, helperText: errMessege })}
+      {...other}
     />
   );
 };

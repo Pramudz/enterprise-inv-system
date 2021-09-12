@@ -1,5 +1,5 @@
-import React from "react";
 import SideMenu from "../components/SideMenu";
+import { connect } from "react-redux";
 import {
   makeStyles,
   CssBaseline,
@@ -8,6 +8,9 @@ import {
 } from "@material-ui/core";
 import Header from "../components/Header";
 import Users from "../pages/Users/Users";
+import LoginForm from "../pages/Users/LoginForm";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { loginAuthSuccess } from "../redux";
 const customisedTheme = createMuiTheme({
   palette: {
     primary: {
@@ -50,18 +53,39 @@ const useStyles = makeStyles({
   },
 });
 
-function App() {
+function App(props) {
   const classes = useStyles();
+  //const userLoggedIn = props.userState;
+  const token = localStorage.getItem("USER_KEY");
+  if (!token) {
+    return <LoginForm />;
+  }
   return (
     <ThemeProvider theme={customisedTheme}>
-      <SideMenu />
-      <div className={classes.appMain}>
-        <Header />
-        <Users />
-      </div>
-      <CssBaseline />
+      <Router>
+        <SideMenu />
+        <div className={classes.appMain}>
+          <Header />
+          <Switch>
+            <Route exact path="/" component={LoginForm} />
+            <Route exact path="/user" component={Users} />
+          </Switch>
+        </div>
+        <CssBaseline />
+      </Router>
     </ThemeProvider>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    userState: state.loggedInUser,
+  };
+};
+const mapDispatchToState = (dispatch) => {
+  return {
+    addUser: (input) => dispatch(loginAuthSuccess(input)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToState)(App);

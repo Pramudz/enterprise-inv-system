@@ -6,7 +6,7 @@ import {
 import DateFnsUtils from "@date-io/date-fns";
 
 const DatePicker = (props) => {
-  const { name, labelName, value, onChange } = props;
+  const { name, labelName, value, onChange, ...other } = props;
 
   const convertToDefaultValue = (name, value) => ({
     target: {
@@ -27,6 +27,7 @@ const DatePicker = (props) => {
         KeyboardButtonProps={{
           "aria-label": "change date",
         }}
+        {...other}
       ></KeyboardDatePicker>
     </MuiPickersUtilsProvider>
   );

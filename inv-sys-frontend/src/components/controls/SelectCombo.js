@@ -1,11 +1,17 @@
 import React from "react";
-import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+} from "@material-ui/core";
 
 const SelectCombo = (props) => {
-  const { labelName, value, name, onChange, items } = props;
+  const { labelName, value, name, onChange, items, errMessege } = props;
 
   return (
-    <FormControl variant="outlined">
+    <FormControl variant="outlined" {...(errMessege && { error: true })}>
       <InputLabel>{labelName}</InputLabel>
       <Select label={labelName} value={value} name={name} onChange={onChange}>
         <MenuItem value="">None</MenuItem>
@@ -15,6 +21,7 @@ const SelectCombo = (props) => {
           </MenuItem>
         ))}
       </Select>
+      {errMessege && <FormHelperText>{errMessege}</FormHelperText>}
     </FormControl>
   );
 };

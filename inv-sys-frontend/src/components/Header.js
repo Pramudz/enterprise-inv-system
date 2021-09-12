@@ -13,6 +13,7 @@ import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
 import PowerSettingsNewIcon from "@material-ui/icons/PowerSettingsNew";
 import SearchIcon from "@material-ui/icons/Search";
+import { useHistory } from "react-router";
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "#fff",
@@ -37,8 +38,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = () => {
+const Header = (props) => {
   const styleClasses = useStyles();
+  const history = useHistory();
+  const logOut = () => {
+    localStorage.clear();
+    window.location("/");
+  };
 
   return (
     <AppBar position="static" className={styleClasses.root}>
@@ -78,7 +84,7 @@ const Header = () => {
               </Badge>
             </IconButton>
 
-            <IconButton>
+            <IconButton onClick={logOut}>
               <PowerSettingsNewIcon fontSize="small" />
             </IconButton>
           </Grid>

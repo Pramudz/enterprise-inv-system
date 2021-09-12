@@ -1,6 +1,8 @@
 package com.procisinc.inventorysystem.model;
 
-import java.util.Set;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,7 +12,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,12 +32,13 @@ import javax.persistence.JoinColumn;
 @Data
 @NoArgsConstructor
 @Table(name="users")
-public class Users {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
+public class Users implements Serializable , UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
-	private int user_id;
+	private int id;
 
 	@Column(name = "first_name")
 	private String firstName;
@@ -36,7 +47,7 @@ public class Users {
 	private String lastName;
 
 	@Column(name = "user_name", unique = true)
-	private String userName;
+	private String username;
 
 	@Column(name = "dob")
 	private java.sql.Date date;
@@ -49,12 +60,16 @@ public class Users {
 
 	@Column(name = "user_email", unique = true , nullable = true)
 	private String userEmail;
+	
+	@ManyToOne
+	@JoinColumn(name="location_id")
+	private Location location;
 
 	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinTable(name = "user_role", joinColumns = {
 			@JoinColumn(referencedColumnName = "user_id" , nullable = false) }, inverseJoinColumns = {
 					@JoinColumn(referencedColumnName = "role_id", nullable = false) })
-	private Set<Role> role;
+	private List<Role> role;
 
 	@Column(name = "password", nullable = true)
 	private String password;
@@ -70,4 +85,34 @@ public class Users {
 	
 	@Column(name = "gender",nullable = true)
 	private String gender;
+
+	@Transient
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return role;
+	}
+
+	
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }

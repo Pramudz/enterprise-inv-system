@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Grid, TextField } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { Grid } from "@material-ui/core";
 import { useFormState, Form } from "../../components/useFormState";
 import DefaultTextField from "../../components/controls/DefaultTextField";
 import DefaultRadioGroup from "../../components/controls/DefaultRadioGroup";
@@ -9,6 +9,20 @@ import DatePicker from "../../components/controls/DatePicker";
 import CheckBox from "../../components/controls/CheckBox";
 import FormButton from "../../components/controls/FormButton";
 import SaveIcon from "@material-ui/icons/Save";
+import Validation from "../../components/Validation";
+import axios from "axios";
+
+const user = "pramudz";
+const pass = "pramuwa";
+const api = axios.create({
+  baseURL: "http://localhost:8080/api/",
+  headers: {
+    "Access-Control-Allow-Origin": "http://localhost:3000",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+    Authorization: "Basic " + btoa(`${user}:${pass}`),
+  },
+});
+
 const genderItems = [
   { id: "male", title: "Male" },
   { id: "female", title: "Female" },
@@ -21,11 +35,14 @@ const roleItems = [
   { id: "3", name: "Supervisor" },
 ];
 
-const locations = [
-  { id: "1", name: "Moratuwa" },
-  { id: "2", name: "Panadura" },
-  { id: "3", name: "wattala" },
-];
+// const getLocations = async () => {
+//   let data = await api.get("/locations").then(({ data }) => data);
+//   console.log(data);
+//   data.forEach((d) => {
+//     locations.push({ id: d.id, name: d.locationName });
+//   });
+// };
+
 const intialValues = {
   id: 0,
   firstName: "Kanchana",
@@ -44,40 +61,123 @@ const intialValues = {
   gender: "female",
 };
 
-const UserForm = () => {
-  const { values, handleInputChange } = useFormState(intialValues);
+const UserForm = (props) => {
+  const {
+    values,
+    handleInputChange,
+    errors,
+    setErrors,
+    resetForm,
+  } = useFormState(intialValues);
 
+  //set locations to ComboBox using UseState
+  const [locations, setLocations] = useState([]);
+
+  //set Roles to ComboBox using UseState
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    async function getLocations() {
+      let data = await api.get("/locations").then(({ data }) => data);
+      console.log(data);
+      let locations = [];
+      data.forEach((d) => {
+        locations.push({ key: d.id, id: d.id, name: d.locationName });
+      });
+      setLocations(locations);
+    }
+    async function getRoles() {
+      let data = await api.get("/roles").then(({ data }) => data);
+      console.log(data);
+      let roles = [];
+      data.forEach((dat) => {
+        roles.push({ key: dat.id, id: dat.id, name: dat.roleName });
+      });
+      setRoles(roles);
+    }
+    getRoles();
+    getLocations();
+  }, []);
+
+  const { validateEmail, validateStringWithoutSpace } = Validation();
+
+  let temp = {};
+  const validateFormOnSubmit = () => {
+    temp.firstName = values.firstName ? "" : "This Field is Required";
+    temp.lastName = values.lastName ? "" : "This Field is Required";
+    temp.userName = values.userName ? "" : "This Field is Required";
+    temp.contactNum =
+      values.contactNum.length > 9 ? "" : "Contact Number is not Valid";
+    temp.location =
+      values.location.length !== 0 ? "" : "This Field is Required";
+
+    setErrors({
+      ...temp,
+    });
+    const testValue = (inputValue) => inputValue === "";
+    return Object.values(temp).every(testValue);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateFormOnSubmit()) window.alert("Hi");
+    props.history("/");
+  };
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Grid container>
         <Grid item xs={6}>
           <DefaultTextField
-            fieldName="firstName"
-            labelValue="First Name"
-            fieldValue={values.firstName}
+            variant="outlined"
+            name="firstName"
+            label="First Name"
+            value={values.firstName}
             onChange={handleInputChange}
+            onKeyUp={validateStringWithoutSpace(
+              values.firstName,
+              errors,
+              "firstName",
+              "First Name"
+            )}
+            errMessege={errors.firstName}
           />
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="lastName"
             label="Last Name"
             value={values.lastName}
             onChange={handleInputChange}
+            onKeyUp={validateStringWithoutSpace(
+              values.lastName,
+              errors,
+              "lastName",
+              "Last Name"
+            )}
+            errMessege={errors.lastName}
           />
 
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="userName"
             label="User Name"
             value={values.userName}
             onChange={handleInputChange}
+            onKeyUp={validateStringWithoutSpace(
+              values.userName,
+              errors,
+              "userName",
+              "Username"
+            )}
+            errMessege={errors.userName}
           />
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="email"
             label="Email"
             value={values.email}
             onChange={handleInputChange}
+            onKeyUp={validateEmail(values.email, errors, "email")}
+            errMessege={errors.email}
           />
 
           <DatePicker
@@ -87,14 +187,15 @@ const UserForm = () => {
             onChange={handleInputChange}
           />
 
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="city"
             label="Living City"
             value={values.city}
             onChange={handleInputChange}
+            errMessege={errors.city}
           />
-          <TextField
+          <DefaultTextField
             variant="outlined"
             name="contactNum"
             label="Contact Number"
@@ -114,17 +215,18 @@ const UserForm = () => {
           <MultiSelectCombo
             labelName="Roles"
             selectName="roles"
-            items={roleItems}
+            items={roles}
           />
-
           <SelectCombo
             labelName="Outlet Name"
             value={values.location}
             name="location"
             onChange={handleInputChange}
             items={locations}
+            errMessege={errors.location}
           />
-          <TextField
+
+          <DefaultTextField
             variant="outlined"
             disabled
             name="lastLogin"
@@ -133,7 +235,7 @@ const UserForm = () => {
             onChange={handleInputChange}
           />
 
-          <TextField
+          <DefaultTextField
             name="password"
             value={values.passowrd}
             id="outlined-password-input"
@@ -176,6 +278,7 @@ const UserForm = () => {
               size="large"
               color="default"
               variant="contained"
+              onClick={resetForm}
             />
           </div>
         </Grid>

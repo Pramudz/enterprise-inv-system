@@ -1,14 +1,12 @@
 package com.procisinc.inventorysystem.controller;
 
-import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,35 +14,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.procisinc.inventorysystem.model.Location;
+import com.procisinc.inventorysystem.service.LocationService;
 
-import com.procisinc.inventorysystem.model.Users;
-import com.procisinc.inventorysystem.service.UserService;
 
 @RestController
 @RequestMapping("/api")
-public class UserController {
-
+public class LocationController {
 	
 	@Autowired
-	private UserService userService;
+	LocationService locationService;
 	
-	
-	@GetMapping("/users")
-	Collection<Users> getAllUsers() {
-		return userService.getAllUsers();
+	@GetMapping("/locations")
+	Collection<Location> getAllLocations() {
+		return locationService.getAllLocation();
 	}
 	
 	
-	@GetMapping("/user/{id}")
-	ResponseEntity<?> getUser(@PathVariable Integer id) {
-		return userService.getUserById(id);
+	@GetMapping("/location/{id}")
+	ResponseEntity<?> getLocationById(@PathVariable Long id) {
+		return locationService.getLocationById(id);
 	}
 	
-	@PostMapping("/user")
-	ResponseEntity<Users> creatUser(@Valid @RequestBody Users user) throws URISyntaxException {
-		return userService.addNewUser(user);
+	@PostMapping("/location")
+	ResponseEntity<Location> createNewLocation(@Valid @RequestBody Location loc) {
+		return locationService.addNewLocation(loc);
 	}
-	
-	
-	
+
 }

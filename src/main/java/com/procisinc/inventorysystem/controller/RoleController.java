@@ -47,7 +47,7 @@ public class RoleController {
 		
 		Role result = rolesRepository.save(role);
 		
-		return ResponseEntity.created(new URI("/api/role/"+ result.getRoleId())).body(result);
+		return ResponseEntity.created(new URI("/api/role/"+ result.getId())).body(result);
 	
 	
 }
