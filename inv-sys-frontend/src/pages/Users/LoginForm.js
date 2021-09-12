@@ -12,43 +12,37 @@ import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom";
-import axios from "axios";
-import PropTypes from "prop-types";
+import { useSelector, useDispatch } from "react-redux";
+import { userLoginWithThunk } from "../../redux";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Alert from "@material-ui/lab/Alert";
+import instanceOfaxios from "../../services/axios";
+import { useHistory } from "react-router";
 
-const user = "pramud";
-const pass = "pramud@123";
-// const tokn = Buffer.from(`${user}:${pass}`, "utf8").toString("base64");
-const api = axios.create({
-  baseURL: "http://localhost:8080/api/",
-  headers: {
-    "Access-Control-Allow-Origin": "http://localhost:3000",
-    "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
-    Authorization: "Basic " + btoa(`${user}:${pass}`),
-  },
-});
+// const user = "pramudz";
+// const pass = "pramuwa";
+// // const tokn = Buffer.from(`${user}:${pass}`, "utf8").toString("base64");
+// const api = axios.create({
+//   baseURL: "http://localhost:8080/api/",
+//   headers: {
+//     "Access-Control-Allow-Origin": "http://localhost:3000",
+//     "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+//     //Authorization: "Basic " + btoa(`${user}:${pass}`),
+//   },
+// });
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
       <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+        ProsinC Web Soluctions
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
   );
 }
-
-const loginUser = async (userName, password) => {
-  let data = await api
-    .get("/user/" + userName, {
-      Authorization: "Basic " + btoa(`${user}:${pass}`),
-    })
-    .then(({ data }) => data);
-  console.log(data);
-  return data;
-};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,31 +77,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LoginForm({ setToken }) {
-  let history = useHistory();
+//component start
+const LoginForm = () => {
+  const history = useHistory();
+  const { loading, error } = useSelector((state) => state.loggedInUser);
+  const dispatch = useDispatch();
   const classes = useStyles();
-  const [userEmail, setUserEmail] = useState();
-  const [password, setPassword] = useState();
-  useEffect(() => {
-    fetch("http://localhost:8080/api/users", {
-      method: "GET",
-      headers: new Headers({
-        Accept: "application/json",
-        Authorization: "Basic " + btoa(`${user}:${pass}`),
-      }),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => console.log(error));
-  });
+  const initializeUserData = {
+    username: "admin",
+    password: "admin@123",
+  };
+
+  const [loginUser, setLoginUser] = useState(initializeUserData);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setLoginUser({
+      ...loginUser,
+      [name]: value,
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const token = loginUser(userEmail, password);
-    setToken(token);
+    dispatch(userLoginWithThunk(loginUser));
   };
+
+  const getUsers = () => {
+    // dispatch(userLoginWithThunk(loginUser));
+  };
+  useEffect(() => getUsers(), []);
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -126,12 +125,13 @@ export default function LoginForm({ setToken }) {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
+              id="username"
+              label="User Address"
+              name="username"
               autoComplete="email"
               autoFocus
-              onChange={(e) => setUserEmail(e.target.value)}
+              onChange={handleInputChange}
+              value={loginUser.username}
             />
             <TextField
               variant="outlined"
@@ -143,7 +143,8 @@ export default function LoginForm({ setToken }) {
               type="password"
               id="password"
               autoComplete="current-password"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleInputChange}
+              value={loginUser.password}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -157,6 +158,7 @@ export default function LoginForm({ setToken }) {
               className={classes.submit}
             >
               Sign In
+              {loading && <CircularProgress color="secondary" />}
             </Button>
             <Grid container>
               <Grid item xs>
@@ -170,6 +172,7 @@ export default function LoginForm({ setToken }) {
                 </Link>
               </Grid>
             </Grid>
+            <Box mt={5}>{error && <Alert severity="error">{error}</Alert>}</Box>
             <Box mt={5}>
               <Copyright />
             </Box>
@@ -178,7 +181,5 @@ export default function LoginForm({ setToken }) {
       </Grid>
     </Grid>
   );
-}
-LoginForm.propTypes = {
-  setToken: PropTypes.func.isRequired,
 };
+export default LoginForm;

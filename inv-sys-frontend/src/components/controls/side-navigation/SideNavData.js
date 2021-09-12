@@ -59,7 +59,7 @@ const Items = [
   {
     title: "Dashboard",
     icon: <DashboardIcon style={{ color: color }} />,
-    path: "/user",
+    path: "/",
   },
   {
     title: "Main Items",
@@ -70,8 +70,8 @@ const Items = [
         icon: <FiberManualRecordIcon style={{ color: color }} />,
         items: [
           {
-            title: "sub item 1",
-            path: "/app/inventory/item_group1",
+            title: "Sub item 2",
+            path: "/subitem",
             icon: <FiberManualRecordIcon style={{ color: color }} />,
           },
           {
@@ -96,6 +96,17 @@ const Items = [
         title: "Create Item Code",
         path: "/app/inventory/create",
         icon: <AddIcon style={{ color: color }} />,
+      },
+    ],
+  },
+  {
+    title: "User Maintanence",
+    icon: <DashboardIcon style={{ color: color }} />,
+    items: [
+      {
+        title: "User Creation",
+        path: "/user",
+        icon: <FiberManualRecordIcon style={{ color: color }} />,
       },
     ],
   },

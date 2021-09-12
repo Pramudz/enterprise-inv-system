@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
 import { useFormState, Form } from "../../components/useFormState";
 import DefaultTextField from "../../components/controls/DefaultTextField";
@@ -12,8 +12,15 @@ import SaveIcon from "@material-ui/icons/Save";
 import Validation from "../../components/Validation";
 import axios from "axios";
 
+const user = "pramudz";
+const pass = "pramuwa";
 const api = axios.create({
   baseURL: "http://localhost:8080/api/",
+  headers: {
+    "Access-Control-Allow-Origin": "http://localhost:3000",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+    Authorization: "Basic " + btoa(`${user}:${pass}`),
+  },
 });
 
 const genderItems = [
@@ -28,16 +35,13 @@ const roleItems = [
   { id: "3", name: "Supervisor" },
 ];
 
-let locations = [
-  { id: "1", name: "Moratuwa" },
-  { id: "2", name: "Panadura" },
-  { id: "3", name: "wattala" },
-];
-
-const getLocations = async () => {
-  let data = await api.get("/locations").then(({ data }) => data);
-  console.log(data);
-};
+// const getLocations = async () => {
+//   let data = await api.get("/locations").then(({ data }) => data);
+//   console.log(data);
+//   data.forEach((d) => {
+//     locations.push({ id: d.id, name: d.locationName });
+//   });
+// };
 
 const intialValues = {
   id: 0,
@@ -57,7 +61,7 @@ const intialValues = {
   gender: "female",
 };
 
-const UserForm = () => {
+const UserForm = (props) => {
   const {
     values,
     handleInputChange,
@@ -66,9 +70,35 @@ const UserForm = () => {
     resetForm,
   } = useFormState(intialValues);
 
+  //set locations to ComboBox using UseState
+  const [locations, setLocations] = useState([]);
+
+  //set Roles to ComboBox using UseState
+  const [roles, setRoles] = useState([]);
+
   useEffect(() => {
+    async function getLocations() {
+      let data = await api.get("/locations").then(({ data }) => data);
+      console.log(data);
+      let locations = [];
+      data.forEach((d) => {
+        locations.push({ key: d.id, id: d.id, name: d.locationName });
+      });
+      setLocations(locations);
+    }
+    async function getRoles() {
+      let data = await api.get("/roles").then(({ data }) => data);
+      console.log(data);
+      let roles = [];
+      data.forEach((dat) => {
+        roles.push({ key: dat.id, id: dat.id, name: dat.roleName });
+      });
+      setRoles(roles);
+    }
+    getRoles();
     getLocations();
-  });
+  }, []);
+
   const { validateEmail, validateStringWithoutSpace } = Validation();
 
   let temp = {};
@@ -91,6 +121,7 @@ const UserForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateFormOnSubmit()) window.alert("Hi");
+    props.history("/");
   };
   return (
     <Form onSubmit={handleSubmit}>
@@ -184,7 +215,7 @@ const UserForm = () => {
           <MultiSelectCombo
             labelName="Roles"
             selectName="roles"
-            items={roleItems}
+            items={roles}
           />
           <SelectCombo
             labelName="Outlet Name"

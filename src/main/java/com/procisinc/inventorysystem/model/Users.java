@@ -1,8 +1,8 @@
 package com.procisinc.inventorysystem.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,9 +14,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.Data;
@@ -30,7 +33,7 @@ import javax.persistence.JoinColumn;
 @NoArgsConstructor
 @Table(name="users")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
-public class Users implements Serializable {
+public class Users implements Serializable , UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +47,7 @@ public class Users implements Serializable {
 	private String lastName;
 
 	@Column(name = "user_name", unique = true)
-	private String userName;
+	private String username;
 
 	@Column(name = "dob")
 	private java.sql.Date date;
@@ -82,4 +85,34 @@ public class Users implements Serializable {
 	
 	@Column(name = "gender",nullable = true)
 	private String gender;
+
+	@Transient
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return role;
+	}
+
+	
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }

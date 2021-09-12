@@ -48,6 +48,7 @@ function SideNav() {
           title={data.title}
           items={data.items}
           icon={data.icon}
+          
         />
       );
     }

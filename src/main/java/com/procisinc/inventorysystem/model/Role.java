@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name="role")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
-public class Role implements Serializable {
+public class Role implements Serializable , GrantedAuthority {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +51,11 @@ public class Role implements Serializable {
 					@JoinColumn(referencedColumnName  ="func_id" , nullable = false)
 	})
 	private List<RoleFunctions> roleFunctions;
+
+	@Override
+	public String getAuthority() {
+		return roleName;
+	}
 	
 	
 	

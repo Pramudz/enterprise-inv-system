@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -28,6 +29,9 @@ public class UserService implements UserDetailsService {
 	private UserRepository userRepository;
 	
 	
+	@Autowired
+	private PasswordEncoder passwordEncorder;
+	
 	//get all users
 	public Collection<Users> getAllUsers() {
 		return userRepository.findAll();
@@ -42,10 +46,19 @@ public class UserService implements UserDetailsService {
 		
 	}
 	
+	
+	
+	public Users getUserbyEmailOrName(String nameOrEmail)  {
+		Optional<Users> user = userRepository.findByUserName(nameOrEmail);
+		return user.get();
+		
+	}
+	
 	@Transactional
 	public ResponseEntity<Users> addNewUser(Users user) throws URISyntaxException {
 		
 		try {
+			user.setPassword(passwordEncorder.encode(user.getPassword()));
 			Users result = userRepository.save(user);
 			return ResponseEntity.created(new URI("/api/user/"+ result.getId())).body(result);
 		} catch (Exception e) {
@@ -59,8 +72,14 @@ public class UserService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Optional<Users> user = userRepository.findByUserName(username);
 		
-		return new User("pramud","pramud@123", new ArrayList<>());
+		if(user != null) {
+			return user.get();
+		}
+		else {
+			throw new UsernameNotFoundException("Username is Not Exist");
+		}
 	}
 	
 }

@@ -2,6 +2,7 @@ package com.procisinc.inventorysystem.controller;
 
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -39,11 +40,11 @@ public class UserController {
 		return userService.getUserById(id);
 	}
 	
-	
 	@PostMapping("/user")
 	ResponseEntity<Users> creatUser(@Valid @RequestBody Users user) throws URISyntaxException {
 		return userService.addNewUser(user);
 	}
+	
 	
 	
 }

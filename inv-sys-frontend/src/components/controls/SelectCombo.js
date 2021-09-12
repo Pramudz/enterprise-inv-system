@@ -17,7 +17,7 @@ const SelectCombo = (props) => {
         <MenuItem value="">None</MenuItem>
         {items.map((item) => (
           <MenuItem key={item.id} value={item.id}>
-            {item.locationName}
+            {item.name}
           </MenuItem>
         ))}
       </Select>
