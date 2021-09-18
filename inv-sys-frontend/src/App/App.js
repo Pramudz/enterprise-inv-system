@@ -7,10 +7,11 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import Header from "../components/Header";
-import Users from "../pages/Users/Users";
 import LoginForm from "../pages/Users/LoginForm";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch , Redirect } from "react-router-dom";
 import { loginAuthSuccess } from "../redux";
+import DefaultLayout from "../pages/DefaultLayout";
+import UserForm from "../pages/Users/UserForm"
 const customisedTheme = createMuiTheme({
   palette: {
     primary: {
@@ -53,22 +54,28 @@ const useStyles = makeStyles({
   },
 });
 
+
+const PrivateRoute = ({component: Component, ...rest}) => (
+  <Route {...rest} render={(props) => (
+      localStorage.getItem('USER_KEY') ? <Component {...props} /> : <Redirect to="/login"/>
+  )} />
+)
+
 function App(props) {
   const classes = useStyles();
   //const userLoggedIn = props.userState;
-  const token = localStorage.getItem("USER_KEY");
-  if (!token) {
-    return <LoginForm />;
-  }
+  // const token = localStorage.getItem("USER_KEY");
+  // if (!token) {
+  //   return <LoginForm />;
+  // }
   return (
     <ThemeProvider theme={customisedTheme}>
       <Router>
-        <SideMenu />
         <div className={classes.appMain}>
-          <Header />
           <Switch>
-            <Route exact path="/" component={LoginForm} />
-            <Route exact path="/user" component={Users} />
+            <PrivateRoute exact path="/" component ={LoginForm}/>
+            <Route exact path="/login" component={LoginForm} />
+            <Route path="/home" name="Home" render={(props) => <DefaultLayout {...props} />} />
           </Switch>
         </div>
         <CssBaseline />

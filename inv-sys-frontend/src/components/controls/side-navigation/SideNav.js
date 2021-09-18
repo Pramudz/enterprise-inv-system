@@ -6,7 +6,7 @@ import SidebarListItem from "./SideNavListItem";
 import SideNavItemGroup from "./SideNavGroup";
 import Items from "./SideNavData";
 
-const drawerWidth = 250;
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
   logo: {

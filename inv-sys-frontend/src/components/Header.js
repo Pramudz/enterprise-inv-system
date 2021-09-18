@@ -43,7 +43,7 @@ const Header = (props) => {
   const history = useHistory();
   const logOut = () => {
     localStorage.clear();
-    window.location("/");
+    history.push("/login")
   };
 
   return (

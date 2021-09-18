@@ -25,7 +25,7 @@ export const loginAuthFail = (error) => {
   };
 };
 
-export const userLoginWithThunk = (loginRequest) => {
+export const userLoginWithThunk = (loginRequest, history) => {
   return function (dispatch) {
     dispatch(logiAuthRequest());
     instanceOfAxios
@@ -35,6 +35,7 @@ export const userLoginWithThunk = (loginRequest) => {
           const userKey = response.data;
           dispatch(loginAuthSuccess(userKey));
           localStorage.setItem("USER_KEY", userKey.jwt);
+          history.push("/home");
         } else {
           dispatch(loginAuthFail("Something Wrong!Please Try Again"));
         }

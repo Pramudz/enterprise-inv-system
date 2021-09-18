@@ -78,14 +78,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 //component start
-const LoginForm = () => {
+const LoginForm = (props) => {
   const history = useHistory();
   const { loading, error } = useSelector((state) => state.loggedInUser);
   const dispatch = useDispatch();
   const classes = useStyles();
   const initializeUserData = {
-    username: "admin",
-    password: "admin@123",
+    username: "pramud",
+    password: "pramud",
   };
 
   const [loginUser, setLoginUser] = useState(initializeUserData);
@@ -100,7 +100,8 @@ const LoginForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(userLoginWithThunk(loginUser));
+   dispatch(userLoginWithThunk(loginUser, props.history));
+  //  props.history.push("/home")
   };
 
   const getUsers = () => {
